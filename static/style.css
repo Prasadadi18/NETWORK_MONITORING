@@ -1,0 +1,723 @@
+/* ===================================================================
+   Network Guardian — Dark Cybersecurity Dashboard Theme
+   =================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* --- CSS Variables / Design Tokens --- */
+:root {
+  /* Backgrounds */
+  --bg-primary:    #0a0e17;
+  --bg-secondary:  #111827;
+  --bg-card:       rgba(17, 24, 39, 0.7);
+  --bg-card-hover: rgba(17, 24, 39, 0.9);
+  --bg-glass:      rgba(15, 23, 42, 0.6);
+  --bg-input:      rgba(15, 23, 42, 0.8);
+
+  /* Accent colors */
+  --green:         #00ff88;
+  --green-dim:     #00cc6a;
+  --green-glow:    rgba(0, 255, 136, 0.15);
+  --red:           #ff3b5c;
+  --red-dim:       #cc2f4a;
+  --red-glow:      rgba(255, 59, 92, 0.15);
+  --cyan:          #00d4ff;
+  --cyan-dim:      #00a8cc;
+  --cyan-glow:     rgba(0, 212, 255, 0.15);
+  --purple:        #a855f7;
+  --purple-dim:    #8b3fd9;
+  --purple-glow:   rgba(168, 85, 247, 0.15);
+  --yellow:        #fbbf24;
+  --yellow-dim:    #d9a520;
+  --orange:        #fb923c;
+
+  /* Text */
+  --text-primary:    #f1f5f9;
+  --text-secondary:  #94a3b8;
+  --text-tertiary:   #64748b;
+
+  /* Borders */
+  --border:        rgba(148, 163, 184, 0.1);
+  --border-subtle:  rgba(148, 163, 184, 0.06);
+
+  /* Sizing */
+  --radius:        12px;
+  --radius-sm:     8px;
+  --radius-xs:     6px;
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 14px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Animated gradient background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(0, 212, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(168, 85, 247, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--text-tertiary);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* --- Layout --- */
+.app-wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100vh;
+}
+
+/* --- Header --- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--green), var(--cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 0 20px var(--green-glow);
+}
+
+.header-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--green), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+
+.header-stat .label {
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.header-stat .value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+}
+
+.stat-green .value { color: var(--green); }
+.stat-red .value { color: var(--red); }
+.stat-cyan .value { color: var(--cyan); }
+.stat-purple .value { color: var(--purple); }
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--green); }
+  50%      { opacity: 0.5; box-shadow: 0 0 16px var(--green); }
+}
+
+.clock {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* --- Main Grid --- */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 16px;
+  flex: 1;
+}
+
+/* --- Panels (shared) --- */
+.panel {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.panel:hover {
+  border-color: rgba(148, 163, 184, 0.18);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.panel-title .icon {
+  font-size: 1.1rem;
+}
+
+.panel-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+/* Packet feed panel */
+.panel-packets .panel-title { color: var(--cyan); }
+.panel-packets .panel-badge { color: var(--cyan); border-color: rgba(0, 212, 255, 0.2); }
+
+/* Threat panel */
+.panel-threats .panel-title { color: var(--red); }
+.panel-threats .panel-badge { color: var(--red); border-color: rgba(255, 59, 92, 0.2); }
+
+/* Attack panel */
+.panel-attack .panel-title { color: var(--yellow); }
+
+/* Log panel */
+.panel-log .panel-title { color: var(--text-secondary); }
+.panel-log { grid-column: 1 / -1; }
+
+/* --- Data Table --- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 8px 18px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+}
+
+.data-table td {
+  padding: 7px 18px;
+  font-size: 0.82rem;
+  font-family: 'JetBrains Mono', monospace;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background-color 0.2s ease;
+}
+
+.data-table tr:hover td {
+  background: rgba(148, 163, 184, 0.04);
+}
+
+.data-table .col-time {
+  color: var(--text-tertiary);
+  width: 90px;
+}
+
+.data-table .col-ip {
+  color: var(--cyan);
+  font-weight: 500;
+}
+
+.data-table .col-proto {
+  width: 80px;
+}
+
+.data-table .col-port {
+  width: 80px;
+  color: var(--text-secondary);
+}
+
+/* Protocol badges */
+.proto-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.proto-ICMP { background: rgba(0, 212, 255, 0.12); color: var(--cyan); }
+.proto-TCP  { background: rgba(168, 85, 247, 0.12); color: var(--purple); }
+.proto-UDP  { background: rgba(251, 191, 36, 0.12); color: var(--yellow); }
+.proto-OTHER { background: rgba(148, 163, 184, 0.12); color: var(--text-secondary); }
+
+/* Row entrance animation removed as requested */
+
+/* --- Threat Cards --- */
+.threat-list {
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.threat-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 59, 92, 0.15);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  transition: border-color 0.3s;
+}
+
+.threat-card:hover {
+  border-color: rgba(255, 59, 92, 0.35);
+}
+
+.threat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.threat-ip {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--red);
+}
+
+.threat-type {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--red-glow);
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.threat-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.threat-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.threat-reasoning {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding: 8px 10px;
+  background: rgba(168, 85, 247, 0.06);
+  border-radius: var(--radius-xs);
+  border-left: 3px solid var(--purple-dim);
+  font-style: italic;
+  max-height: 250px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+/* Status badges */
+.status-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-PENDING  { background: rgba(251, 191, 36, 0.12); color: var(--yellow); }
+.status-APPLIED  { background: rgba(0, 255, 136, 0.12); color: var(--green); }
+.status-FAILED   { background: rgba(255, 59, 92, 0.12); color: var(--red); }
+.status-REVERTED { background: rgba(148, 163, 184, 0.12); color: var(--text-secondary); }
+
+.threat-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+}
+
+/* --- Attack Control Panel --- */
+.attack-grid {
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.attack-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+
+.attack-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg,
+    rgba(255, 59, 92, 0.08),
+    rgba(251, 191, 36, 0.05));
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.attack-btn:hover::before { opacity: 1; }
+
+.attack-btn:hover {
+  border-color: rgba(255, 59, 92, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.attack-btn:active {
+  transform: translateY(0);
+}
+
+.attack-btn.running {
+  border-color: var(--yellow);
+  pointer-events: none;
+}
+
+.attack-btn.running::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px;
+  background: var(--yellow);
+  animation: progress-bar 10s linear;
+}
+
+@keyframes progress-bar {
+  0%   { width: 0%; }
+  100% { width: 100%; }
+}
+
+.attack-btn .icon {
+  font-size: 1.2rem;
+  z-index: 1;
+}
+
+.attack-btn .label {
+  z-index: 1;
+}
+
+.attack-btn-all {
+  grid-column: 1 / -1;
+  justify-content: center;
+  background: linear-gradient(135deg,
+    rgba(255, 59, 92, 0.1),
+    rgba(168, 85, 247, 0.1));
+  border-color: rgba(255, 59, 92, 0.2);
+}
+
+/* Attack config row */
+.attack-config {
+  display: flex;
+  gap: 12px;
+  padding: 0 18px 14px;
+}
+
+.config-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.config-field label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.config-field input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.config-field input:focus {
+  border-color: var(--cyan-dim);
+}
+
+/* --- System Log --- */
+.log-body {
+  padding: 10px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  line-height: 1.8;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.log-line {
+  display: flex;
+  gap: 10px;
+  animation: log-in 0.3s ease-out;
+}
+
+@keyframes log-in {
+  0%   { opacity: 0; transform: translateX(-6px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.log-time {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.log-msg {
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.log-msg.msg-threat    { color: var(--red); }
+.log-msg.msg-mitigator { color: var(--green); }
+.log-msg.msg-llm       { color: var(--purple); }
+.log-msg.msg-sniffer   { color: var(--cyan); }
+.log-msg.msg-detector  { color: var(--yellow); }
+.log-msg.msg-system    { color: var(--text-secondary); }
+.log-msg.msg-error     { color: var(--red); font-weight: 600; }
+.log-msg.msg-user      { color: var(--orange); }
+
+/* --- Controls Bar (bottom) --- */
+.controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+}
+
+.controls-left {
+  display: flex;
+  gap: 10px;
+}
+
+.ctrl-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ctrl-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.ctrl-btn:active { transform: translateY(0); }
+
+.ctrl-btn-flush {
+  border-color: rgba(251, 191, 36, 0.3);
+  color: var(--yellow);
+}
+
+.ctrl-btn-flush:hover {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: var(--yellow);
+}
+
+.ctrl-btn-shutdown {
+  border-color: rgba(255, 59, 92, 0.3);
+  color: var(--red);
+}
+
+.ctrl-btn-shutdown:hover {
+  background: rgba(255, 59, 92, 0.1);
+  border-color: var(--red);
+}
+
+.controls-right {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1100px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+  .header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .attack-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Toast Notification --- */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 14px 22px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--bg-primary);
+  z-index: 1000;
+  animation: toast-in 0.3s ease-out, toast-out 0.3s ease-in 2.7s forwards;
+  pointer-events: none;
+}
+
+.toast-success { background: var(--green); }
+.toast-error   { background: var(--red); }
+.toast-info    { background: var(--cyan); }
+
+@keyframes toast-in {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toast-out {
+  0%   { opacity: 1; }
+  100% { opacity: 0; transform: translateY(10px); }
+}

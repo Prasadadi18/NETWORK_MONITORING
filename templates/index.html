@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Network Guardian — AI-Powered Network Defense Dashboard. Real-time packet monitoring, threat detection, and automated mitigation.">
+  <title>Network Guardian — AI Defense Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- ============== HEADER ============== -->
+  <header class="header" id="app-header">
+    <div class="header-left">
+      <div class="header-logo">🛡️</div>
+      <div>
+        <div class="header-title">NETWORK GUARDIAN</div>
+        <div class="header-subtitle">AI-Powered Autonomous Defense System</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-stat stat-green">
+        <div class="status-dot" id="status-dot"></div>
+        <span class="label">Status</span>
+        <span class="value">ACTIVE</span>
+      </div>
+      <div class="header-stat stat-red">
+        <span class="label">Blocks</span>
+        <span class="value" id="block-count">0</span>
+        <span class="value" id="blocked-ips" style="display:none; font-size:0.7rem; color:var(--red-dim);"></span>
+      </div>
+      <div class="header-stat stat-cyan">
+        <span class="label">Packets</span>
+        <span class="value" id="packet-count">0</span>
+      </div>
+      <div class="clock" id="clock">00:00:00</div>
+    </div>
+  </header>
+
+  <!-- ============== MAIN GRID ============== -->
+  <div class="main-grid">
+
+    <!-- LEFT: Live Packet Feed -->
+    <div class="panel panel-packets">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="icon">📡</span>
+          Live Packet Feed
+        </div>
+        <span class="panel-badge">REAL-TIME</span>
+      </div>
+      <div class="panel-body" style="max-height: 420px;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Source IP</th>
+              <th>Dest IP</th>
+              <th>Protocol</th>
+              <th>Dest Port</th>
+            </tr>
+          </thead>
+          <tbody id="packet-table-body">
+            <!-- Populated by Socket.IO -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RIGHT: Threat Alerts -->
+    <div class="panel panel-threats">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="icon">🚨</span>
+          Threat Alerts
+        </div>
+        <span class="panel-badge" id="threat-count">0</span>
+      </div>
+      <div class="panel-body" style="max-height: 420px;">
+        <div class="threat-list" id="threat-list">
+          <div class="threat-empty">🛡️ No threats detected</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEFT BOTTOM: Attack Controls -->
+    <div class="panel panel-attack">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="icon">⚔️</span>
+          Attack Simulator
+        </div>
+        <span class="panel-badge" style="color: var(--yellow); border-color: rgba(251,191,36,0.2);">LOOPBACK ONLY</span>
+      </div>
+      <div class="attack-config">
+        <div class="config-field">
+          <label for="config-rate">Rate (pps)</label>
+          <input type="number" id="config-rate" value="150" min="1" max="1000">
+        </div>
+        <div class="config-field">
+          <label for="config-duration">Duration (s)</label>
+          <input type="number" id="config-duration" value="10" min="1" max="120">
+        </div>
+      </div>
+      <div class="attack-grid">
+        <button class="attack-btn" data-attack="icmp_flood" onclick="launchAttack('icmp_flood')">
+          <span class="icon">🧊</span>
+          <span class="label">ICMP Flood</span>
+        </button>
+        <button class="attack-btn" data-attack="syn_flood" onclick="launchAttack('syn_flood')">
+          <span class="icon">🔗</span>
+          <span class="label">SYN Flood</span>
+        </button>
+        <button class="attack-btn" data-attack="udp_flood" onclick="launchAttack('udp_flood')">
+          <span class="icon">💧</span>
+          <span class="label">UDP Flood</span>
+        </button>
+        <button class="attack-btn" data-attack="port_scan" onclick="launchAttack('port_scan')">
+          <span class="icon">🔍</span>
+          <span class="label">Port Scan</span>
+        </button>
+        <button class="attack-btn" data-attack="fragmentation" onclick="launchAttack('fragmentation')">
+          <span class="icon">💥</span>
+          <span class="label">Fragmentation</span>
+        </button>
+        <button class="attack-btn attack-btn-all" data-attack="all" onclick="launchAttack('all')">
+          <span class="icon">☢️</span>
+          <span class="label">Run All Attacks (Sequential)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT BOTTOM: System Log (spans full width on second row is handled by panel-log) -->
+    <!-- Actually let's put log below as full width -->
+
+    <!-- FULL WIDTH: System Log -->
+    <div class="panel panel-log">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="icon">📋</span>
+          System Log
+        </div>
+        <span class="panel-badge">LIVE</span>
+      </div>
+      <div class="log-body" id="log-body">
+        <!-- Populated by Socket.IO -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============== CONTROLS BAR ============== -->
+  <div class="controls-bar">
+    <div class="controls-left">
+      <button class="ctrl-btn ctrl-btn-flush" id="btn-flush" onclick="flushBlocks()">
+        🔄 Flush All Blocks
+      </button>
+      <button class="ctrl-btn ctrl-btn-shutdown" id="btn-shutdown" onclick="shutdownServer()">
+        ⏻ Shutdown
+      </button>
+    </div>
+    <div class="controls-right">
+      Network Guardian v2.0 — Web Dashboard
+    </div>
+  </div>
+
+</div>
+
+<!-- Socket.IO client -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="/static/app.js"></script>
+
+</body>
+</html>
